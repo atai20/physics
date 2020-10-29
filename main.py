@@ -37,7 +37,11 @@ class Objects():
 
         for d in range(len(direct)):
             self.objects[index].f = direct[d][1]
-            self.objects[index].main_F = (direct[d][0], direct[d][1])
+            if direct[d][0]==0:
+                self.objects[index].main_F = (direct[d][0], direct[d][1])
+            else:
+                self.objects[index].main_F = (2*math.pi, direct[d][1])
+
             self.objects[index].x += self.objects[index].f * math.cos(direct[d][0])
             self.objects[index].y += self.objects[index].f * math.sin(direct[d][0])
 
@@ -58,7 +62,7 @@ class Objects():
                         if objct1.main_F[0]==objct2.main_F[0]:
                             objct2.P = (objct2.main_F[0], (2*objct1.m * objct1.f + objct2.f*(objct2.m - objct1.m) )/objct2.m + objct1.m)
                         else:
-                            objct2.P = (-objct2.main_F[0], (2*objct1.m * objct1.f + objct2.f*(objct2.m - objct1.m) )/objct2.m + objct1.m)
+                            objct2.P = (objct2.main_F[0]-math.pi, (2*objct1.m * objct1.f + objct2.f*(objct2.m - objct1.m) )/objct2.m + objct1.m)
 
             print(str(obj[0].main_F[0])+' '+str(obj[0].m))
             print(str(obj[1].main_F[0])+' '+str(obj[1].m))
@@ -86,10 +90,10 @@ GREEN = (0, 200, 64)
 YELLOW = (225, 225, 0)
 PINK = (230, 50, 230)
 d1 = 2
-d = Object(100, 200, 0.001, 1)
-d2 = Object(250, 200, 0.005, 1)
+d = Object(100, 200, 0.02, 1)
+d2 = Object(250, 200, 0.02, 1)
 d.P = (2*math.pi, 0.04)
-d2.P = (math.pi, 0.01)
+d2.P = (2*math.pi, 0.01)
 Objcts = Objects()
 Objcts.create_obj(d)
 Objcts.create_obj(d2)
