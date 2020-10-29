@@ -11,7 +11,7 @@ class Object:
         self.y = y
         self.m = m
         self.wide = wide
-        self.angle = 0
+        self.main_F = (0, 0)
         self.ground_y = 400
         self.obj = pygame.draw.rect(win, (255, 255, 255), (self.x, self.y, 50, 50))
         self.ground = pygame.draw.rect(win, (255, 255, 255), (0, self.ground_y, 500, 500))
@@ -37,27 +37,37 @@ class Objects():
 
         for d in range(len(direct)):
             self.objects[index].f = direct[d][1]
-            self.objects[index].angle = direct[d][0]
-            self.objects[index].x += self.objects[index].f * math.cos(self.objects[index].angle)
-            self.objects[index].y += self.objects[index].f * math.sin(self.objects[index].angle)
+            self.objects[index].main_F = (direct[d][0], direct[d][1])
+            self.objects[index].x += self.objects[index].f * math.cos(direct[d][0])
+            self.objects[index].y += self.objects[index].f * math.sin(direct[d][0])
+
 
         self.objects[index].draw()
 
     def being(self, t, *obj):
+
         for object in obj:
 
             object.index = self.objects.index(object)
             object.Vg = (math.pi / 2, (t ** 2 * g) / 2)
             object.Fgrav = (math.pi / 2, self.objects[object.index].m * g)
-            object.P = (math.pi / 2, 0)
+
             for objct1 in self.objects:
                 for objct2 in obj:
                     if objct2.obj.colliderect(objct1.obj) and objct2 != objct1:
-                        objct2.Vg = (0, 0)
+                        if objct1.main_F[0]==objct2.main_F[0]:
+                            objct2.P = (objct2.main_F[0], (2*objct1.m * objct1.f + objct2.f*(objct2.m - objct1.m) )/objct2.m + objct1.m)
+                        else:
+                            objct2.P = (-objct2.main_F[0], (2*objct1.m * objct1.f + objct2.f*(objct2.m - objct1.m) )/objct2.m + objct1.m)
+
+            print(str(obj[0].main_F[0])+' '+str(obj[0].m))
+            print(str(obj[1].main_F[0])+' '+str(obj[1].m))
+
 
             self.go_to(object, (0, 0))
 
-        self.go_to(obj[0], obj[0].Vg)
+        self.go_to(obj[0], obj[0].P)
+        self.go_to(obj[1], obj[1].P)
 
 
 
@@ -76,8 +86,10 @@ GREEN = (0, 200, 64)
 YELLOW = (225, 225, 0)
 PINK = (230, 50, 230)
 d1 = 2
-d = Object(100, 100, 2, 1)
-d2 = Object(140, 250, 2, 1)
+d = Object(100, 200, 0.001, 1)
+d2 = Object(250, 200, 0.005, 1)
+d.P = (2*math.pi, 0.04)
+d2.P = (math.pi, 0.01)
 Objcts = Objects()
 Objcts.create_obj(d)
 Objcts.create_obj(d2)
